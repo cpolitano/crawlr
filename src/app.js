@@ -1,14 +1,86 @@
-'use strict';
+"use strict";
+import ReactDOM from "react-dom";
+import React from "react";
+const { Component } = React;
+import { createStore, combineReducers } from "redux";
 
-var http = require('http');
-var routes = require('./routes');
 
-var headers = {'Content-Type': 'text/html'};
+const spot = (state, action) => {
+  switch (action.type) {
+    case "ADD":
+      return {
+        id: action.id,
+        text: action.text,
+        visited: false
+      };
+    case "TOGGLE":
+      if (state.id !== action.id) {
+        return state;
+      }
+      return {
+        ...state,
+        visited: !state.visited
+      };
+    default:
+      return state;
+  }
+}
 
+const spots = (state = [], action) => {
+  switch (action.type) {
+    case "ADD":
+      return [
+        ...state,
+        spot(undefined, action)
+      ];
+    case "TOGGLE":
+      return state.map(s => spot(s, action))
+    default:
+      return state;
+  }
+}
 
-http.createServer(function (request, response) {
-  response.writeHead(200, headers);
-  routes.home(request, response);
-}).listen(3000);
+const store = createStore(spots, {});
 
-console.log('Server running at http://localhost:3000');
+store.subscribe(() =>
+  console.log(store.getState())
+);
+
+store.dispatch({
+  id: 0,
+  text: "big bear cafe",
+  type: "ADD"
+});
+
+store.dispatch({
+  id: 1,
+  text: "showtime",
+  type: "ADD"
+});
+
+class CrawlrApp extends Component {
+  render() {
+    return (
+      <div>
+        <h3>Best Neighborhood Spots</h3>
+        <ul>
+          {this.props.spots.map(spot => 
+            <li key={spot.id}>
+              {spot.text}
+            </li>
+          )}
+        </ul>
+      </div>
+    );
+  }
+}
+
+const render = () => {
+  ReactDOM.render(
+    <CrawlrApp spots={store.getState()} />,
+    document.getElementById("react-crawlr-app")
+  );
+};
+
+store.subscribe(render);
+render();
