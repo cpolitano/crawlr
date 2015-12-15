@@ -92,6 +92,9 @@ var CrawlrApp = (function (_Component) {
   _createClass(CrawlrApp, [{
     key: "render",
     value: function render() {
+      var _this = this;
+
+      var nextSpotId = 2;
       return _react2["default"].createElement(
         "div",
         null,
@@ -110,6 +113,21 @@ var CrawlrApp = (function (_Component) {
               spot.text
             );
           })
+        ),
+        _react2["default"].createElement("input", { ref: function (node) {
+            _this.input = node;
+          } }),
+        _react2["default"].createElement(
+          "button",
+          { onClick: function () {
+              store.dispatch({
+                type: "ADD",
+                text: _this.input.value,
+                id: nextSpotId++
+              });
+              _this.input.value = "";
+            } },
+          "add a spot"
         )
       );
     }

@@ -60,6 +60,7 @@ store.dispatch({
 
 class CrawlrApp extends Component {
   render() {
+    let nextSpotId = 2
     return (
       <div>
         <h3>Best Neighborhood Spots</h3>
@@ -70,6 +71,17 @@ class CrawlrApp extends Component {
             </li>
           )}
         </ul>
+        <input ref={ node => {
+          this.input = node;
+        }} />
+        <button onClick={ () => {
+          store.dispatch({
+            type: "ADD",
+            text: this.input.value,
+            id: nextSpotId++
+          });
+          this.input.value = "";
+        }}>add a spot</button>
       </div>
     );
   }
