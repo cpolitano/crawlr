@@ -80,6 +80,8 @@ store.dispatch({
   type: "ADD"
 });
 
+var nextSpotId = 2;
+
 var CrawlrApp = (function (_Component) {
   _inherits(CrawlrApp, _Component);
 
@@ -94,7 +96,6 @@ var CrawlrApp = (function (_Component) {
     value: function render() {
       var _this = this;
 
-      var nextSpotId = 2;
       return _react2["default"].createElement(
         "div",
         null,

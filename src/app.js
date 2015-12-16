@@ -58,9 +58,10 @@ store.dispatch({
   type: "ADD"
 });
 
+let nextSpotId = 2;
+
 class CrawlrApp extends Component {
   render() {
-    let nextSpotId = 2
     return (
       <div>
         <h3>Best Neighborhood Spots</h3>
