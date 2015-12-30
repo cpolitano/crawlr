@@ -3,7 +3,9 @@ import ReactDOM from "react-dom";
 import React from "react";
 const { Component } = React;
 import { createStore, combineReducers } from "redux";
+import getLocation from "./geolocation";
 
+getLocation();
 
 const spot = (state, action) => {
   switch (action.type) {

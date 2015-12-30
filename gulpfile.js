@@ -12,9 +12,9 @@ gulp.task('clean', function() {
 });
 
 gulp.task('babel', function () {
-  return gulp.src('src/*.js')
+  return gulp.src('src/client/*.js')
     .pipe(babel())
-    .pipe(concat('app.js'))
+    // .pipe(concat('app.js'))
     .pipe(gulp.dest('dist'));
 });
 
