@@ -143,6 +143,25 @@ var render = function render() {
 
 store.subscribe(render);
 render();
+"use strict";
+
+console.log("inside geo coords");
+
+navigator.geolocation.getCurrentPosition(function (position) {
+  console.log(position.coords);
+});
+'use strict';
+
+var headers = { 'Content-Type': 'text/html' };
+
+function home(request, response) {
+  if (request.url === '/') {
+    response.writeHead(200, headers);
+    response.end();
+  }
+}
+
+module.exports.home = home;
 },{"react":159,"react-dom":3,"redux":161}],2:[function(require,module,exports){
 // shim for using process in browser
 

@@ -14,7 +14,7 @@ gulp.task('clean', function() {
 gulp.task('babel', function () {
   return gulp.src('src/*.js')
     .pipe(babel())
-    // .pipe(concat('app.js'))
+    .pipe(concat('app.js'))
     .pipe(gulp.dest('dist'));
 });
 
