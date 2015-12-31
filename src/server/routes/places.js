@@ -2,13 +2,15 @@ var request = require("request");
 
 module.exports = function(router) {
 
-	router.get("/places", function() {
+	router.get("/places", function(req, res) {
+		var lat = req.query.lat || 38.9135463;
+		var lon = req.query.lon || -77.009148;
 		try {
 			var uri = [
 		  		"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=",
-		  		"38.9135905",
+		  		lat,
 		  		",",
-		  		"-77.0091621",
+		  		lon,
 		  		"&radius=500",
 		  		"&types=bar|restaurant|cafe",
 		  		"&opennow",
@@ -16,21 +18,18 @@ module.exports = function(router) {
 		  		process.env.GOOGLE_KEY
 		  	].join("");
 
-		  	var res = request(uri, function (error, response, body) {
+		  	request(uri, function (error, response, body) {
 			  	if (!error && response.statusCode === 200) {
-			  		console.log(body);
-			  		return body;
+			  		res.send(body);
 				} else {
 					console.log(error);
 				}
 			});
 
-			this.body = res;
-
 		} catch (err) {
 			console.log(err);
-			this.status = 500;
-			return;
+			res.sendStatus(500);
+			res.end();
 		}
 	});
 
