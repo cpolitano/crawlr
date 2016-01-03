@@ -3,16 +3,15 @@ import ReactDOM from "react-dom";
 import React from "react";
 const { Component } = React;
 import { createStore, combineReducers } from "redux";
-import getLocation from "./geolocation";
-
-getLocation();
+import { Provider, connect } from "react-redux";
+import SpotsList from "./nearby-spots";
 
 const spot = (state, action) => {
   switch (action.type) {
     case "ADD":
       return {
         id: action.id,
-        text: action.text,
+        name: action.name,
         visited: false
       };
     case "TOGGLE":
@@ -22,6 +21,12 @@ const spot = (state, action) => {
       return {
         ...state,
         visited: !state.visited
+      };
+    case "GET_SPOTS":
+      return {
+        id: action.id,
+        name: action.name,
+        visited: false
       };
     default:
       return state;
@@ -37,65 +42,65 @@ const spots = (state = [], action) => {
       ];
     case "TOGGLE":
       return state.map(s => spot(s, action))
+    case "GET_SPOTS":
+      action.spots.map(s => 
+        [
+          ...state,
+          spot(undefined, action)
+        ]
+      );
+      return state;
     default:
       return state;
   }
 }
 
-const store = createStore(spots, {});
-
-store.subscribe(() =>
-  console.log(store.getState())
-);
-
-store.dispatch({
-  id: 0,
-  text: "big bear cafe",
-  type: "ADD"
-});
-
-store.dispatch({
-  id: 1,
-  text: "showtime",
-  type: "ADD"
-});
-
-let nextSpotId = 2;
-
-class CrawlrApp extends Component {
-  render() {
-    return (
-      <div>
-        <h3>Best Neighborhood Spots</h3>
-        <ul>
-          {this.props.spots.map(spot => 
-            <li key={spot.id}>
-              {spot.text}
-            </li>
-          )}
-        </ul>
-        <input ref={ node => {
-          this.input = node;
-        }} />
-        <button onClick={ () => {
-          store.dispatch({
-            type: "ADD",
-            text: this.input.value,
-            id: nextSpotId++
-          });
-          this.input.value = "";
-        }}>add a spot</button>
-      </div>
-    );
+const getSpots = (state = [], action) => {
+  switch (action.type) {
+    case "GET_SPOTS":
+      return [
+        ...state,
+        action.spots
+      ]
+    default:
+      return state;
   }
 }
 
-const render = () => {
-  ReactDOM.render(
-    <CrawlrApp spots={store.getState()} />,
-    document.getElementById("react-crawlr-app")
-  );
-};
+// const store = createStore(spots, {});
+const crawlrApp = combineReducers({
+  spots,
+  getSpots
+});
 
-store.subscribe(render);
-render();
+// store.subscribe(() =>
+//   console.log(store.getState())
+// );
+
+// store.dispatch({
+//   id: 0,
+//   name: "big bear cafe",
+//   type: "ADD"
+// });
+
+// store.dispatch({
+//   id: 1,
+//   name: "showtime",
+//   type: "ADD"
+// });
+
+let nextSpotId = 2;
+
+const CrawlrApp = () => (
+  <div>
+    <h3>Best Neighborhood Spots</h3>
+    <SpotsList />
+  </div>
+);
+
+ReactDOM.render(
+  <Provider store={ createStore(crawlrApp) }>
+    <CrawlrApp />
+  </Provider>,
+  document.getElementById("react-crawlr-app")
+);

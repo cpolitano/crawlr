@@ -1,19 +1,23 @@
 import fetch from "isomorphic-fetch";
 
-const getSpots = (lat, lon) => {
+export function getLocation() {
+	return new Promise(function(resolve) {
+		navigator.geolocation.getCurrentPosition(function(position) {
+			console.log(position.coords);
+			resolve(position.coords);
+		});
+	})
+}
+
+export function getSpots(lat, lon) {
 	let uri = ["/places?lat=", lat, "&lon=", lon].join("");
-	fetch(uri, { credentials: "same-origin" })
-	.then(resp => resp.json())
-	.then(json => 
-		console.log(json)
-	);
+	return (dispatch) => {
+		fetch(uri, { credentials: "same-origin" })
+		.then(resp => resp.json())
+		.then(json => dispatch({
+				type: "GET_SPOTS",
+				spots: json
+			})
+		)
+	}
 }
-
-const getLocation = () => {
-	navigator.geolocation.getCurrentPosition(function(position) {
-		console.log(position.coords);
-		getSpots(position.coords.latitude, position.coords.longitude);
-	});
-}
-
-export default getLocation;
