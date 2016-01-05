@@ -9,8 +9,9 @@ class SpotsList extends React.Component {
 	}
 
 	componentWillMount() {
+		let dispatch = this.props.dispatch;
 		getLocation().then(function(position) {
-			this.props.dispatch(getSpots(position.latitude, position.longitude));
+			dispatch(getSpots(position.latitude, position.longitude));
 		}).catch(function(err) {
 			console.log(err);
 		})

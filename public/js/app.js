@@ -17,6 +17,10 @@ var _react2 = _interopRequireDefault(_react);
 
 var _redux = require("redux");
 
+var _reduxThunk = require("redux-thunk");
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
 var _reactRedux = require("react-redux");
 
 var _nearbySpots = require("./nearby-spots");
@@ -106,6 +110,8 @@ var crawlrApp = (0, _redux.combineReducers)({
 
 var nextSpotId = 2;
 
+var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2["default"])(_redux.createStore);
+
 var CrawlrApp = function CrawlrApp() {
   return _react2["default"].createElement(
     "div",
@@ -121,10 +127,10 @@ var CrawlrApp = function CrawlrApp() {
 
 _reactDom2["default"].render(_react2["default"].createElement(
   _reactRedux.Provider,
-  { store: (0, _redux.createStore)(crawlrApp) },
+  { store: createStoreWithMiddleware(crawlrApp) },
   _react2["default"].createElement(CrawlrApp, null)
 ), document.getElementById("react-crawlr-app"));
-},{"./nearby-spots":3,"react":172,"react-dom":7,"react-redux":10,"redux":174}],2:[function(require,module,exports){
+},{"./nearby-spots":3,"react":172,"react-dom":7,"react-redux":10,"redux":175,"redux-thunk":173}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -149,11 +155,9 @@ function getLocation() {
 }
 
 function getSpots(lat, lon) {
-	// getLocation()
-	// .then(function(coords) {
-	console.log("inside get spots");
-	var uri = ["/places?lat=", lat, "&lon=", lon].join("");
 	return function (dispatch) {
+		console.log("inside get spots");
+		var uri = ["/places?lat=", lat, "&lon=", lon].join("");
 		(0, _isomorphicFetch2["default"])(uri, { credentials: "same-origin" }).then(function (resp) {
 			return resp.json();
 		}).then(function (json) {
@@ -163,12 +167,6 @@ function getSpots(lat, lon) {
 			});
 		});
 	};
-	// })
-	// .catch(
-	// 	function(err) {
-	// 		console.log(err);
-	// 	}
-	// )
 }
 },{"isomorphic-fetch":5}],3:[function(require,module,exports){
 "use strict";
@@ -206,8 +204,9 @@ var SpotsList = (function (_React$Component) {
 	_createClass(SpotsList, [{
 		key: "componentWillMount",
 		value: function componentWillMount() {
+			var dispatch = this.props.dispatch;
 			(0, _geolocation.getLocation)().then(function (position) {
-				this.props.dispatch((0, _geolocation.getSpots)(position.latitude, position.longitude));
+				dispatch((0, _geolocation.getSpots)(position.latitude, position.longitude));
 			})["catch"](function (err) {
 				console.log(err);
 			});
@@ -1157,7 +1156,7 @@ function wrapActionCreators(actionCreators) {
 }
 
 module.exports = wrapActionCreators;
-},{"redux":174}],15:[function(require,module,exports){
+},{"redux":175}],15:[function(require,module,exports){
 /**
  * Copyright 2015, Yahoo! Inc.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
@@ -20045,6 +20044,21 @@ module.exports = require('./lib/React');
 },{"./lib/React":40}],173:[function(require,module,exports){
 'use strict';
 
+function thunkMiddleware(_ref) {
+  var dispatch = _ref.dispatch;
+  var getState = _ref.getState;
+
+  return function (next) {
+    return function (action) {
+      return typeof action === 'function' ? action(dispatch, getState) : next(action);
+    };
+  };
+}
+
+module.exports = thunkMiddleware;
+},{}],174:[function(require,module,exports){
+'use strict';
+
 exports.__esModule = true;
 exports['default'] = createStore;
 
@@ -20206,7 +20220,7 @@ function createStore(reducer, initialState) {
     replaceReducer: replaceReducer
   };
 }
-},{"./utils/isPlainObject":179}],174:[function(require,module,exports){
+},{"./utils/isPlainObject":180}],175:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20238,7 +20252,7 @@ exports.combineReducers = _utilsCombineReducers2['default'];
 exports.bindActionCreators = _utilsBindActionCreators2['default'];
 exports.applyMiddleware = _utilsApplyMiddleware2['default'];
 exports.compose = _utilsCompose2['default'];
-},{"./createStore":173,"./utils/applyMiddleware":175,"./utils/bindActionCreators":176,"./utils/combineReducers":177,"./utils/compose":178}],175:[function(require,module,exports){
+},{"./createStore":174,"./utils/applyMiddleware":176,"./utils/bindActionCreators":177,"./utils/combineReducers":178,"./utils/compose":179}],176:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20300,7 +20314,7 @@ function applyMiddleware() {
 }
 
 module.exports = exports['default'];
-},{"./compose":178}],176:[function(require,module,exports){
+},{"./compose":179}],177:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20355,7 +20369,7 @@ function bindActionCreators(actionCreators, dispatch) {
 }
 
 module.exports = exports['default'];
-},{"./mapValues":180}],177:[function(require,module,exports){
+},{"./mapValues":181}],178:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -20489,7 +20503,7 @@ function combineReducers(reducers) {
 
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"../createStore":173,"./isPlainObject":179,"./mapValues":180,"./pick":181,"_process":4}],178:[function(require,module,exports){
+},{"../createStore":174,"./isPlainObject":180,"./mapValues":181,"./pick":182,"_process":4}],179:[function(require,module,exports){
 /**
  * Composes single-argument functions from right to left.
  *
@@ -20515,7 +20529,7 @@ function compose() {
 }
 
 module.exports = exports["default"];
-},{}],179:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20547,7 +20561,7 @@ function isPlainObject(obj) {
 }
 
 module.exports = exports['default'];
-},{}],180:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 /**
  * Applies a function to every key-value pair inside an object.
  *
@@ -20568,7 +20582,7 @@ function mapValues(obj, fn) {
 }
 
 module.exports = exports["default"];
-},{}],181:[function(require,module,exports){
+},{}],182:[function(require,module,exports){
 /**
  * Picks key-value pairs from an object where values satisfy a predicate.
  *

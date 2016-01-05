@@ -10,8 +10,8 @@ export function getLocation() {
 }
 
 export function getSpots(lat, lon) {
-	let uri = ["/places?lat=", lat, "&lon=", lon].join("");
 	return (dispatch) => {
+		let uri = ["/places?lat=", lat, "&lon=", lon].join("");
 		fetch(uri, { credentials: "same-origin" })
 		.then(resp => resp.json())
 		.then(json => dispatch({

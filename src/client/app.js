@@ -2,7 +2,8 @@
 import ReactDOM from "react-dom";
 import React from "react";
 const { Component } = React;
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 import { Provider, connect } from "react-redux";
 import SpotsList from "./nearby-spots";
 
@@ -91,6 +92,10 @@ const crawlrApp = combineReducers({
 
 let nextSpotId = 2;
 
+const createStoreWithMiddleware = applyMiddleware(
+  thunk
+)(createStore);
+
 const CrawlrApp = () => (
   <div>
     <h3>Best Neighborhood Spots</h3>
@@ -99,7 +104,7 @@ const CrawlrApp = () => (
 );
 
 ReactDOM.render(
-  <Provider store={ createStore(crawlrApp) }>
+  <Provider store={ createStoreWithMiddleware(crawlrApp) }>
     <CrawlrApp />
   </Provider>,
   document.getElementById("react-crawlr-app")
