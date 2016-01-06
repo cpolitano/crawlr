@@ -32,7 +32,6 @@ var Component = _react2["default"].Component;
 var spot = function spot(state, action) {
   switch (action.type) {
     case "ADD":
-      console.log(action);
       return {
         id: action.id,
         name: action.name,
@@ -60,20 +59,6 @@ var spots = function spots(state, action) {
       return state.map(function (s) {
         return spot(s, action);
       });
-    // case "GET_SPOTS":
-    //   action.spots.map(s => {
-    //       let currentAction = {
-    //           type: "ADD",
-    //           id: s.id,
-    //           name: s.name,
-    //           visited: false
-    //       }
-    //       return [
-    //         ...state,
-    //         spot(undefined, currentAction)
-    //       ];
-    //   });
-    //   console.log(state);
     default:
       return state;
   }
@@ -171,6 +156,13 @@ var _reactRedux = require("react-redux");
 
 var _geolocation = require("./geolocation");
 
+var getHighestRated = function getHighestRated(spots) {
+	var highestRated = spots.filter(function (spot) {
+		return spot.rating > 4;
+	});
+	return highestRated;
+};
+
 var SpotsList = (function (_React$Component) {
 	_inherits(SpotsList, _React$Component);
 
@@ -191,8 +183,18 @@ var SpotsList = (function (_React$Component) {
 			});
 		}
 	}, {
+		key: "componentWillReceiveProps",
+		value: function componentWillReceiveProps() {}
+	}, {
 		key: "render",
 		value: function render() {
+			var highestRatedSpots = [];
+			console.log(this.props.spots);
+			if (this.props.spots.length > 0) {
+				highestRatedSpots = getHighestRated(this.props.spots);
+			} else {
+				highestRatedSpots = this.props.spots;
+			}
 
 			return _react2["default"].createElement(
 				"div",
@@ -205,7 +207,7 @@ var SpotsList = (function (_React$Component) {
 				_react2["default"].createElement(
 					"ul",
 					null,
-					this.props.spots.map(function (spot) {
+					highestRatedSpots.map(function (spot) {
 						return _react2["default"].createElement(
 							"li",
 							{ key: spot.id },

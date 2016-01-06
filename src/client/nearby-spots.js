@@ -3,6 +3,13 @@ import React from "react";
 import { connect } from "react-redux";
 import { getLocation, getSpots } from "./geolocation";
 
+const getHighestRated = (spots) => {
+	let highestRated = spots.filter((spot) => {
+		return spot.rating > 4;
+	});
+	return highestRated;
+}
+
 class SpotsList extends React.Component {
 	constructor(props) {
 		super(props);
@@ -18,12 +25,16 @@ class SpotsList extends React.Component {
 	}
 
 	render() {
+		let highestRatedSpots = [];
+		if ( this.props.spots.length > 0 ) {
+			highestRatedSpots = getHighestRated(this.props.spots);
+		}
 		
 		return (
 			<div>
 				<h3>Best Neighborhood Spots</h3>
 				<ul>
-					{this.props.spots.map(spot => {
+					{highestRatedSpots.map(spot => {
 							return <li key={spot.id}>{spot.name}</li>;
 						})
 					}
