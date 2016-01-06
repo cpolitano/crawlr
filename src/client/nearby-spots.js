@@ -18,19 +18,22 @@ class SpotsList extends React.Component {
 	}
 
 	render() {
+		
 		return (
-			<ul>
-				{this.props.spots.map(spot => 
-					<div>
-						{spot.name}
-					</div>
-				)}
-			</ul>
+			<div>
+				<h3>Best Neighborhood Spots</h3>
+				<ul>
+					{this.props.spots.map(spot => {
+							return <li key={spot.id}>{spot.name}</li>;
+						})
+					}
+				</ul>
+			</div>
 		);
 	}
 }
 
 export default SpotsList = connect(state => ({
-	spots: state.spots
+	spots: state.getSpots
 }))(SpotsList);
 

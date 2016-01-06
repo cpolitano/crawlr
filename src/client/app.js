@@ -23,12 +23,6 @@ const spot = (state, action) => {
         ...state,
         visited: !state.visited
       };
-    case "GET_SPOTS":
-      return {
-        id: action.id,
-        name: action.name,
-        visited: false
-      };
     default:
       return state;
   }
@@ -43,14 +37,6 @@ const spots = (state = [], action) => {
       ];
     case "TOGGLE":
       return state.map(s => spot(s, action))
-    case "GET_SPOTS":
-      action.spots.map(s => 
-        [
-          ...state,
-          spot(undefined, action)
-        ]
-      );
-      return state;
     default:
       return state;
   }
@@ -59,38 +45,16 @@ const spots = (state = [], action) => {
 const getSpots = (state = [], action) => {
   switch (action.type) {
     case "GET_SPOTS":
-      return [
-        ...state,
-        action.spots
-      ]
+      return action.spots;
     default:
       return state;
   }
 }
 
-// const store = createStore(spots, {});
 const crawlrApp = combineReducers({
   spots,
   getSpots
 });
-
-// store.subscribe(() =>
-//   console.log(store.getState())
-// );
-
-// store.dispatch({
-//   id: 0,
-//   name: "big bear cafe",
-//   type: "ADD"
-// });
-
-// store.dispatch({
-//   id: 1,
-//   name: "showtime",
-//   type: "ADD"
-// });
-
-let nextSpotId = 2;
 
 const createStoreWithMiddleware = applyMiddleware(
   thunk
@@ -98,7 +62,6 @@ const createStoreWithMiddleware = applyMiddleware(
 
 const CrawlrApp = () => (
   <div>
-    <h3>Best Neighborhood Spots</h3>
     <SpotsList />
   </div>
 );

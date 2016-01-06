@@ -32,6 +32,7 @@ var Component = _react2["default"].Component;
 var spot = function spot(state, action) {
   switch (action.type) {
     case "ADD":
+      console.log(action);
       return {
         id: action.id,
         name: action.name,
@@ -44,12 +45,6 @@ var spot = function spot(state, action) {
       return _extends({}, state, {
         visited: !state.visited
       });
-    case "GET_SPOTS":
-      return {
-        id: action.id,
-        name: action.name,
-        visited: false
-      };
     default:
       return state;
   }
@@ -65,11 +60,20 @@ var spots = function spots(state, action) {
       return state.map(function (s) {
         return spot(s, action);
       });
-    case "GET_SPOTS":
-      action.spots.map(function (s) {
-        return [].concat(_toConsumableArray(state), [spot(undefined, action)]);
-      });
-      return state;
+    // case "GET_SPOTS":
+    //   action.spots.map(s => {
+    //       let currentAction = {
+    //           type: "ADD",
+    //           id: s.id,
+    //           name: s.name,
+    //           visited: false
+    //       }
+    //       return [
+    //         ...state,
+    //         spot(undefined, currentAction)
+    //       ];
+    //   });
+    //   console.log(state);
     default:
       return state;
   }
@@ -80,35 +84,16 @@ var getSpots = function getSpots(state, action) {
 
   switch (action.type) {
     case "GET_SPOTS":
-      return [].concat(_toConsumableArray(state), [action.spots]);
+      return action.spots;
     default:
       return state;
   }
 };
 
-// const store = createStore(spots, {});
 var crawlrApp = (0, _redux.combineReducers)({
   spots: spots,
   getSpots: getSpots
 });
-
-// store.subscribe(() =>
-//   console.log(store.getState())
-// );
-
-// store.dispatch({
-//   id: 0,
-//   name: "big bear cafe",
-//   type: "ADD"
-// });
-
-// store.dispatch({
-//   id: 1,
-//   name: "showtime",
-//   type: "ADD"
-// });
-
-var nextSpotId = 2;
 
 var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2["default"])(_redux.createStore);
 
@@ -116,11 +101,6 @@ var CrawlrApp = function CrawlrApp() {
   return _react2["default"].createElement(
     "div",
     null,
-    _react2["default"].createElement(
-      "h3",
-      null,
-      "Best Neighborhood Spots"
-    ),
     _react2["default"].createElement(_nearbySpots2["default"], null)
   );
 };
@@ -156,14 +136,13 @@ function getLocation() {
 
 function getSpots(lat, lon) {
 	return function (dispatch) {
-		console.log("inside get spots");
 		var uri = ["/places?lat=", lat, "&lon=", lon].join("");
 		(0, _isomorphicFetch2["default"])(uri, { credentials: "same-origin" }).then(function (resp) {
 			return resp.json();
 		}).then(function (json) {
 			return dispatch({
 				type: "GET_SPOTS",
-				spots: json
+				spots: json.results
 			});
 		});
 	};
@@ -214,16 +193,26 @@ var SpotsList = (function (_React$Component) {
 	}, {
 		key: "render",
 		value: function render() {
+
 			return _react2["default"].createElement(
-				"ul",
+				"div",
 				null,
-				this.props.spots.map(function (spot) {
-					return _react2["default"].createElement(
-						"div",
-						null,
-						spot.name
-					);
-				})
+				_react2["default"].createElement(
+					"h3",
+					null,
+					"Best Neighborhood Spots"
+				),
+				_react2["default"].createElement(
+					"ul",
+					null,
+					this.props.spots.map(function (spot) {
+						return _react2["default"].createElement(
+							"li",
+							{ key: spot.id },
+							spot.name
+						);
+					})
+				)
 			);
 		}
 	}]);
@@ -233,7 +222,7 @@ var SpotsList = (function (_React$Component) {
 
 exports["default"] = SpotsList = (0, _reactRedux.connect)(function (state) {
 	return {
-		spots: state.spots
+		spots: state.getSpots
 	};
 })(SpotsList);
 module.exports = exports["default"];

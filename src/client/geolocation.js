@@ -16,7 +16,7 @@ export function getSpots(lat, lon) {
 		.then(resp => resp.json())
 		.then(json => dispatch({
 				type: "GET_SPOTS",
-				spots: json
+				spots: json.results
 			})
 		)
 	}
