@@ -1,5 +1,7 @@
 "use strict";
 import React from "react";
+import List from "material-ui/lib/lists/list";
+import ListItem from "material-ui/lib/lists/list-item";
 import { connect } from "react-redux";
 import { getLocation, getSpots } from "./geolocation";
 
@@ -31,15 +33,12 @@ class SpotsList extends React.Component {
 		}
 		
 		return (
-			<div>
-				<h3>Best Neighborhood Spots</h3>
-				<ul>
-					{highestRatedSpots.map(spot => {
-							return <li key={spot.id}>{spot.name}</li>;
-						})
-					}
-				</ul>
-			</div>
+			<ul>
+				{highestRatedSpots.map(spot => {
+						return <li key={spot.id}>{spot.name}</li>;
+					})
+				}
+			</ul>
 		);
 	}
 }
