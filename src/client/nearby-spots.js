@@ -1,7 +1,8 @@
 "use strict";
 import React from "react";
-import List from "material-ui/lib/lists/list";
-import ListItem from "material-ui/lib/lists/list-item";
+import Card from "material-ui/lib/card/card";
+import CardHeader from "material-ui/lib/card/card-header";
+import CardText from "material-ui/lib/card/card-text";
 import { connect } from "react-redux";
 import { getLocation, getSpots } from "./geolocation";
 
@@ -30,15 +31,30 @@ class SpotsList extends React.Component {
 		let highestRatedSpots = [];
 		if ( this.props.spots.length > 0 ) {
 			highestRatedSpots = getHighestRated(this.props.spots);
+			console.log(highestRatedSpots);
 		}
 		
 		return (
-			<ul>
+			<div>
 				{highestRatedSpots.map(spot => {
-						return <li key={spot.id}>{spot.name}</li>;
+						return (
+							<Card initiallyExpanded={false}
+								key={spot.id}>
+								<CardHeader
+									title={spot.name}
+									subtitle={spot.vicinity}
+									actAsExpander={true}
+									showExpandableButton={true} />
+								<CardText expandable={true}>
+									{spot.name}<br/>
+									{spot.types[0]}, {spot.types[1]}<br/>
+									Rating: {spot.rating}, Price: {spot.price_level}
+								</CardText>
+							</Card>
+						);
 					})
 				}
-			</ul>
+			</div>
 		);
 	}
 }
