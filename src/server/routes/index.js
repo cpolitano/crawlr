@@ -1,3 +1,6 @@
+var createDB = require("../db");
+
+createDB();
 
 module.exports = function(router) {
 
